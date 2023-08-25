@@ -19,9 +19,8 @@ class MyApp extends StatelessWidget {
       splitScreenMode: false,
       builder: (context, child) {
         return GetMaterialApp(
-          // this where the light mode colors are defined in
           debugShowCheckedModeBanner: false,
-          title: 'Skiipe',
+          title: 'Test App',
           theme: ThemeData(
             primaryColor: Colors.white,
             useMaterial3: true,

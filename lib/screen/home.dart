@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 
-class HomeScreen extends StatelessWidget {
-  HomeScreen({Key? key}) : super(key: key);
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
 
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
   List<Map<String, String>> dummyData = [
     {
       'image':
@@ -26,6 +30,21 @@ class HomeScreen extends StatelessWidget {
     },
   ];
 
+  List<bool> favoriteStates = [];
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize favorite states to false for all items
+    favoriteStates = List.generate(dummyData.length, (index) => false);
+  }
+
+  void toggleFavorite(int index) {
+    setState(() {
+      favoriteStates[index] = !favoriteStates[index];
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,20 +57,23 @@ class HomeScreen extends StatelessWidget {
           child: Column(
             children: [
               SizedBox(
-                height: Get.height * 0.9,
-                // width: 500,
+                height: MediaQuery.of(context).size.height * 0.9,
                 child: ListView.builder(
                   shrinkWrap: true,
                   itemCount: dummyData.length,
                   itemBuilder: (context, index) {
                     return ImageCard(
+                      press: () {
+                        toggleFavorite(index);
+                      },
+                      isFavorite: favoriteStates[index],
                       image: dummyData[index]['image']!,
                       title: dummyData[index]['title']!,
                       description: dummyData[index]['description']!,
                     );
                   },
                 ),
-              )
+              ),
             ],
           ),
         ),
@@ -65,9 +87,13 @@ class ImageCard extends StatelessWidget {
       {super.key,
       required this.image,
       required this.title,
-      required this.description});
+      required this.description,
+      required this.press,
+      required this.isFavorite});
 
   final String image, title, description;
+  final Function() press;
+  final bool isFavorite;
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +103,23 @@ class ImageCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.network(image),
+            Stack(
+              children: [
+                Image.network(image),
+                Positioned(
+                  top: 10,
+                  right: 20,
+                  child: IconButton(
+                    onPressed: press,
+                    iconSize: 30,
+                    icon: Icon(
+                      isFavorite ? Icons.favorite : Icons.favorite_border,
+                      color: Colors.red,
+                    ),
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(
               height: 10,
             ),
