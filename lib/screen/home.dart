@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:test_app/screen/details.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -47,6 +49,17 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Future<void> _fetchData() async {
+    //   try {
+    //     final newData = await fetchDataFromAPI();
+    //     setState(() {
+    //       dummyData = newData;
+    //     });
+    //   } catch (e) {
+    //     // Handle error
+    //   }
+    // }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('HomeScreen'),
@@ -58,21 +71,32 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.9,
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: dummyData.length,
-                  itemBuilder: (context, index) {
-                    return ImageCard(
-                      press: () {
-                        toggleFavorite(index);
-                      },
-                      isFavorite: favoriteStates[index],
-                      image: dummyData[index]['image']!,
-                      title: dummyData[index]['title']!,
-                      description: dummyData[index]['description']!,
-                    );
-                  },
-                ),
+                child: dummyData.isEmpty
+                    ? const Center(child: CircularProgressIndicator())
+                    : ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: dummyData.length,
+                        itemBuilder: (context, index) {
+                          return GestureDetector(
+                            onTap: () {
+                              Get.to(Details(
+                                  image: dummyData[index]['image']!,
+                                  title: dummyData[index]['title']!,
+                                  description: dummyData[index]
+                                      ['description']!));
+                            },
+                            child: ImageCard(
+                              press: () {
+                                toggleFavorite(index);
+                              },
+                              isFavorite: favoriteStates[index],
+                              image: dummyData[index]['image']!,
+                              title: dummyData[index]['title']!,
+                              description: dummyData[index]['description']!,
+                            ),
+                          );
+                        },
+                      ),
               ),
             ],
           ),
